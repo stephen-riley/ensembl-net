@@ -8,6 +8,8 @@ namespace Ensembl.Tests
     [TestClass]
     public class TestsAgainstRestEndpoint
     {
+        const string speciesDbName = "homo_sapiens_core_99_38";
+
         private HttpClient client;
 
         [TestInitialize]
@@ -28,7 +30,7 @@ namespace Ensembl.Tests
         {
             var expected = await client.GetStringAsync($"http://rest.ensembl.org/sequence/region/homo_sapiens/1:{start}..{end}:1?content-type=text/plain");
 
-            var seq = new Slice(species: "homo sapiens", chromosomeName: "1").GetSequenceString(start, end);
+            var seq = new Slice(speciesDbName: speciesDbName, chromosomeName: "1").GetSequenceString(start, end);
 
             Assert.AreEqual(expected, seq);
         }

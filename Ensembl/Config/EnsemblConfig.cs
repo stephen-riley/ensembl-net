@@ -4,7 +4,7 @@ using IniFileParser;
 using IniFileParser.Model;
 using static System.Environment;
 
-namespace Ensembl
+namespace Ensembl.Config
 {
     public class EnsemblConfig
     {
@@ -19,28 +19,38 @@ namespace Ensembl
             return singletonInstance;
         }
 
-        private string ConnStr = "Server=useastdb.ensembl.org;User ID=anonymous;Database=homo_sapiens_core_99_38";
+        public static string ConnectionString { get; private set; }
 
-        public static string ConnectionString => GetInstance().ConnStr;
+        public static string ShortConnectionString { get; private set; }
 
-        public EnsemblConfig()
+        static EnsemblConfig()
         {
             var etcData = ReadConfigFile("/etc/ensembl.conf");
             var homeData = ReadConfigFile($"{GetFolderPath(SpecialFolder.UserProfile)}/.ensembl.conf");
 
+            var config = default(IniData);
+
             if (etcData != null && homeData != null)
             {
                 etcData.Merge(homeData);
-                ConnStr = etcData["Database"]["connection_string"];
+                config = etcData;
             }
             else if (etcData != null)
             {
-                ConnStr = etcData["Database"]["connection_string"];
+                config = etcData;
             }
             else if (homeData != null)
             {
-                ConnStr = homeData["Database"]["connection_string"];
+                config = homeData;
             }
+            else
+            {
+                throw new Exception("No ensembl configuration present");
+            }
+
+            var dbConfig = new DbConfig(config);
+            ShortConnectionString = string.Format("Server={0};User ID={1}", dbConfig.Host, dbConfig.User);
+            ConnectionString = $"{ShortConnectionString};Database={{0}}";
 
             EnsemblInitializer.Init();
         }

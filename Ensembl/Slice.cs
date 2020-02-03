@@ -7,7 +7,7 @@ namespace Ensembl
 {
     public class Slice
     {
-        public string Species { get; private set; }
+        public string SpeciesDbName { get; private set; }
         private Chromosome? chromosome;
 
         public string ChromosomeName { get; private set; }
@@ -28,9 +28,9 @@ namespace Ensembl
             }
         }
 
-        public Slice(string species, string chromosomeName)
+        public Slice(string speciesDbName, string chromosomeName)
         {
-            Species = species;
+            SpeciesDbName = speciesDbName;
             ChromosomeName = chromosomeName;
         }
 
@@ -41,11 +41,9 @@ namespace Ensembl
 
         public IEnumerable<string> GetSequenceStrings(int start = 1, int end = Int32.MaxValue)
         {
-            // TODO: figure out proper species handling
-
             var seqs = new List<ReadOnlyMemory<char>>();
 
-            chromosome = Cache.GetChromosome(ChromosomeName);
+            chromosome = SpeciesCache.ByName(SpeciesDbName).GetChromosome(ChromosomeName);
 
             foreach (var asm in chromosome.Assemblies)
             {
@@ -71,12 +69,12 @@ namespace Ensembl
                 {
                     if (asm.Orientation == 1)
                     {
-                        var seq = Cache.GetDnaSequence(asm.ComponentSeqRegionId, asm.AsmToCmp(adjStart), asm.AsmToCmp(adjEnd));
+                        var seq = SpeciesCache.ByName(SpeciesDbName).GetDnaSequence(asm.ComponentSeqRegionId, asm.AsmToCmp(adjStart), asm.AsmToCmp(adjEnd));
                         seqs.Add(seq);
                     }
                     else
                     {
-                        var seq = Cache.GetDnaSequence(asm.ComponentSeqRegionId, asm.AsmToCmp(adjEnd), asm.AsmToCmp(adjStart));
+                        var seq = SpeciesCache.ByName(SpeciesDbName).GetDnaSequence(asm.ComponentSeqRegionId, asm.AsmToCmp(adjEnd), asm.AsmToCmp(adjStart));
                         var revComp = asm.ReverseComplement(seq).AsMemory();
                         seqs.Add(revComp);
                     }

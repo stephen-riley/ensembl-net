@@ -5,12 +5,14 @@ namespace Ensembl.Tests
     [TestClass]
     public class BasicTests
     {
+        const string speciesDbName = "homo_sapiens_core_99_38";
+
         [TestMethod]
         public void NsAreInsertedAppropriatelyAtTheBeginning()
         {
             var expected = "NNNNNNNNNN";
 
-            var slice = new Slice(species: "homo sapiens", chromosomeName: "1");
+            var slice = new Slice(speciesDbName: speciesDbName, chromosomeName: "1");
             var seq = slice.GetSequenceString(1, 10);
 
             Assert.AreEqual(expected, seq);
@@ -21,7 +23,7 @@ namespace Ensembl.Tests
         {
             var expected = "NTAACCCTAACCCTAACCCT";
 
-            var seq = new Slice(species: "homo sapiens", chromosomeName: "1").GetSequenceString(10000, 10019);
+            var seq = new Slice(speciesDbName: speciesDbName, chromosomeName: "1").GetSequenceString(10000, 10019);
 
             Assert.AreEqual(expected, seq);
         }

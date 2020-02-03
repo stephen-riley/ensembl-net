@@ -11,13 +11,16 @@ namespace Ensembl.Dto
 
         public string Id { get; private set; }
 
-        public Chromosome(string id, IEnumerable<Assembly> assemblies)
+        private string SpeciesDbName;
+
+        public Chromosome(string speciesDbName, string id, IEnumerable<Assembly> assemblies)
         {
             Id = id;
             Assemblies = assemblies;
+            SpeciesDbName = speciesDbName;
         }
 
-        internal static Chromosome Get(string name, IDbConnection conn)
+        internal static Chromosome Get(string speciesDbName, string name, IDbConnection conn)
         {
             var asmSql = @"
                 select a.*
@@ -29,8 +32,8 @@ namespace Ensembl.Dto
                 order by asm_start
             ";
 
-            var seqCsId = Cache.TopLevelCoordSystem.Id;
-            var chrCsId = Cache.CoordSystems.Values.Where(cs => cs.Name == "chromosome" && cs.Attributes.Contains("default_version")).First().Id;
+            var seqCsId = SpeciesCache.ByName(speciesDbName).TopLevelCoordSystem.Id;
+            var chrCsId = SpeciesCache.ByName(speciesDbName).CoordSystems.Values.Where(cs => cs.Name == "chromosome" && cs.Attributes.Contains("default_version")).First().Id;
 
             var dbAssemblies = conn.Query<dynamic>(asmSql, new { SeqCsId = seqCsId, ChrCsId = chrCsId, Name = name })
                 .Select(r => new Assembly(
@@ -56,7 +59,7 @@ namespace Ensembl.Dto
                 start = asm.AssemblyEnd + 1;
             }
 
-            return new Chromosome(name, assemblies);
+            return new Chromosome(speciesDbName, name, assemblies);
         }
     }
 }
