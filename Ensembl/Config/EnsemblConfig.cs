@@ -19,9 +19,9 @@ namespace Ensembl.Config
             return singletonInstance;
         }
 
-        public static string ConnectionString { get; private set; }
+        public static string ConnectionString { get; internal set; }
 
-        public static string ShortConnectionString { get; private set; }
+        public static string ShortConnectionString { get; internal set; }
 
         static EnsemblConfig()
         {

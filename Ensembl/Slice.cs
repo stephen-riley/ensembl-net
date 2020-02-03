@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ensembl.Dto;
+using Ensembl.Exceptions;
 
 namespace Ensembl
 {
@@ -28,8 +29,14 @@ namespace Ensembl
             }
         }
 
-        public Slice(string speciesDbName, string chromosomeName)
+        public Slice(string species, string chromosomeName)
         {
+            var speciesDbName = SpeciesCache.GetDbNameForCommonName(species);
+            if (speciesDbName == null)
+            {
+                throw new EnsemblException($"species name '{species}' not found");
+            }
+
             SpeciesDbName = speciesDbName;
             ChromosomeName = chromosomeName;
         }
@@ -87,6 +94,11 @@ namespace Ensembl
             }
 
             return seqs.Select(seq => seq.ToString());
+        }
+
+        public static IEnumerable<string> GetSpeciesDbNames()
+        {
+            return SpeciesCache.GetInstalledEnsemblDatabases();
         }
     }
 }

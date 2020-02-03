@@ -97,5 +97,57 @@ namespace Ensembl
             var valid = dbs.Where(name => regex.IsMatch(name));
             return valid;
         }
+
+        public static string? GetDbNameForCommonName(string name)
+        {
+            var sql = @"
+                use ensembl_metadata_99;
+                select gdb.dbname
+                from genome_database gdb, organism o, genome g
+                where o.organism_id = g.organism_id
+                and gdb.type='core'
+                and g.genome_id = gdb.genome_id
+                and ( o.display_name=@Name or o.name=@Name or o.scientific_name=@Name or o.url_name=@Name )
+                order by gdb.dbname desc
+                limit 1;";
+
+            try
+            {
+                // We try this first because if the name is already a db name, the above query is *very*
+                // expensive just to return null.
+                var isDbName = TryCommonNameAsSpeciesDbName(name);
+                if (isDbName)
+                {
+                    return name;
+                }
+
+                using var conn = new MySqlConnection(EnsemblConfig.ShortConnectionString);
+                var dbname = conn.Query<string>(sql, new { Name = name }).FirstOrDefault();
+                return dbname;
+            }
+            catch (MySqlException e)
+            {
+                if (!e.Message.StartsWith("Unknown database"))
+                {
+                    throw e;
+                }
+                return null;
+            }
+        }
+
+        internal static bool TryCommonNameAsSpeciesDbName(string name)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(EnsemblConfig.ShortConnectionString);
+                conn.Query<int>($"use {name}");
+                return true;
+            }
+            catch (MySqlException)
+            {
+                return false;
+            }
+
+        }
     }
 }
