@@ -1,7 +1,7 @@
 # TODO
 
-- [ ] Use DB connection pooling
-- [ ] Hierarchial config files
+- [x] Use DB connection pooling (for free in MySQL connector)
+- [x] Hierarchial config files
 - [x] Get rid of the `Query<dynamic>` stuff and use type mapping / FluentMapper
 - [ ] Make a nuget package
 - [ ] Probably need to redo the `Slice` API since that means something totally different in `Bio::EnsEMBL`

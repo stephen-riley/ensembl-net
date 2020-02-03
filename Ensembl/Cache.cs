@@ -18,7 +18,7 @@ namespace Ensembl
 
         static Cache()
         {
-            using var conn = new MySqlConnection("Server=localhost;User ID=root;Database=homo_sapiens_core_99_38");
+            using var conn = new MySqlConnection(EnsemblConfig.ConnectionString);
 
             CoordSystems = CoordSystem.GetAll(conn).ToDictionary(cs => cs.Id);
 
@@ -31,7 +31,7 @@ namespace Ensembl
         {
             if (!chromosomes.ContainsKey(name))
             {
-                using var conn = new MySqlConnection("Server=localhost;User ID=root;Database=homo_sapiens_core_99_38");
+                using var conn = new MySqlConnection(EnsemblConfig.ConnectionString);
                 chromosomes[name] = Chromosome.Get(name, conn);
             }
 
@@ -42,7 +42,7 @@ namespace Ensembl
         {
             if (!sequences.ContainsKey(id))
             {
-                using var conn = new MySqlConnection("Server=localhost;User ID=root;Database=homo_sapiens_core_99_38");
+                using var conn = new MySqlConnection(EnsemblConfig.ConnectionString);
                 sequences[id] = Dna.Get(id, conn);
             }
 
