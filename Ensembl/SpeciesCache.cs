@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using Dapper;
 using Ensembl.Config;
 using Ensembl.Dto;
 using MySql.Data.MySqlClient;
+
+[assembly: InternalsVisibleTo("Ensembl.Tests")]
 
 namespace Ensembl
 {
@@ -86,10 +89,11 @@ namespace Ensembl
         {
             var sql = "show databases";
 
-            using var conn = new MySqlConnection(EnsemblConfig.ConnectionString);
+            using var conn = new MySqlConnection(EnsemblConfig.ShortConnectionString);
             var dbs = conn.Query<string>(sql);
 
-            var regex = new Regex(@"_\d+_\d+$");
+            // WARNING: currently only supports "core" species databases
+            var regex = new Regex(@"core_\d+_\d+$");
             var valid = dbs.Where(name => regex.IsMatch(name));
             return valid;
         }

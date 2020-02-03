@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Ensembl.Tests
@@ -26,6 +27,16 @@ namespace Ensembl.Tests
             var seq = new Slice(speciesDbName: speciesDbName, chromosomeName: "1").GetSequenceString(10000, 10019);
 
             Assert.AreEqual(expected, seq);
+        }
+
+        [TestMethod]
+        public void CanListAllAvailableSpecies()
+        {
+            var speciesDbNames = SpeciesCache.GetInstalledEnsemblDatabases();
+
+            var homoSapiens = speciesDbNames.Where(name => name == speciesDbName).FirstOrDefault();
+
+            Assert.IsNotNull(homoSapiens);
         }
     }
 }
