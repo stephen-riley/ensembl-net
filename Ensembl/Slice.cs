@@ -13,11 +13,11 @@ namespace Ensembl
 
         public string ChromosomeName { get; private set; }
 
-        public string this[long position]
+        public string this[int position]
         {
             get
             {
-                throw new NotImplementedException();
+                return GetSequenceString(position, position);
             }
         }
 
@@ -25,7 +25,7 @@ namespace Ensembl
         {
             get
             {
-                throw new NotImplementedException();
+                return GetSequenceString(range.Start.Value, range.End.Value);
             }
         }
 
