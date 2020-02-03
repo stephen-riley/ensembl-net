@@ -92,17 +92,7 @@ namespace Ensembl.Dto
         {
             var sql = @"select * from assembly where asm_seq_region_id = @Id";
 
-            return conn.Query<dynamic>(sql, new { Id = asmSeqRegionId })
-                .Select(r => new Assembly
-                (
-                    r.asm_seq_region_id,
-                    r.asm_start,
-                    r.asm_end,
-                    r.cmp_seq_region_id,
-                    r.cmp_start,
-                    r.cmp_end,
-                    r.ori
-                ));
+            return conn.Query<Assembly>(sql, new { Id = asmSeqRegionId });
         }
     }
 }

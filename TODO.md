@@ -2,7 +2,7 @@
 
 - [ ] Use DB connection pooling
 - [ ] Hierarchial config files
-- [ ] Get rid of the `Query<dynamic>` stuff and use type mapping / FluentMapper
+- [x] Get rid of the `Query<dynamic>` stuff and use type mapping / FluentMapper
 - [ ] Make a nuget package
 - [ ] Probably need to redo the `Slice` API since that means something totally different in `Bio::EnsEMBL`
 - [ ] Figure out multi-species support (is that multiple databases? multiple schemas? surely Ensembl has a way to do this...)

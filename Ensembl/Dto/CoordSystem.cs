@@ -17,8 +17,16 @@ namespace Ensembl.Dto
         public string? Version { get; set; }
 
         public int Rank { get; set; }
+        public string AttributesString { get; set; }
 
-        public ISet<string> Attributes { get; private set; }
+        public ISet<string> Attributes => new HashSet<string>(AttributesString.Split(","));
+
+        // for Dapper
+        internal CoordSystem()
+        {
+            Name = string.Empty;
+            AttributesString = string.Empty;
+        }
 
         public CoordSystem(int id, int speciesId, string name, string? version, int rank, string attributes)
         {
@@ -27,7 +35,7 @@ namespace Ensembl.Dto
             Name = name;
             Version = version;
             Rank = rank;
-            Attributes = new HashSet<string>(attributes.Split(","));
+            AttributesString = attributes;
         }
 
         public override string ToString()
@@ -74,21 +82,8 @@ namespace Ensembl.Dto
         {
             var sql = @"select * from coord_system";
 
-            return conn.Query<dynamic>(sql)
-                .Select(r =>
-                {
-                    var dict = (IDictionary<string, object?>)r;
-                    //Console.WriteLine($"r.coord_system_id:{r.coord_system_id.GetType()} ,r.species_id:{r.species_id.GetType()} ,r.name:{r.name.GetType()} ,r.version:{r.version.GetType()} ,r.rank:{r.rank.GetType()} ,r.attrib:{r.attrib.GetType()} ,");
-                    return new CoordSystem
-                    (
-                        (int)r.coord_system_id,
-                        (int)r.species_id,
-                        (string)r.name,
-                        (string?)r.version,
-                        (int)r.rank,
-                        (string)r.attrib
-                    );
-                });
+            var res = conn.Query<CoordSystem>(sql);
+            return res;
         }
     }
 }

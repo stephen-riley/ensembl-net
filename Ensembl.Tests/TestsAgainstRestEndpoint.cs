@@ -10,6 +10,12 @@ namespace Ensembl.Tests
     {
         private HttpClient client;
 
+        [ClassInitialize]
+        public static void Init(TestContext _)
+        {
+            EnsemblInitializer.Init();
+        }
+
         [TestInitialize]
         public void ClientSetup()
         {

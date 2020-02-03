@@ -5,6 +5,12 @@ namespace Ensembl.Tests
     [TestClass]
     public class BasicTests
     {
+        [ClassInitialize]
+        public static void Init(TestContext _)
+        {
+            EnsemblInitializer.Init();
+        }
+
         [TestMethod]
         public void NsAreInsertedAppropriatelyAtTheBeginning()
         {

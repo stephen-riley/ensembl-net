@@ -9,6 +9,12 @@ namespace Ensembl.Dto
         public int SeqRegionId { get; private set; }
         public string Sequence { get; private set; }
 
+        // for Dapper
+        internal Dna()
+        {
+            Sequence = string.Empty;
+        }
+
         public Dna(int id, string seq)
         {
             SeqRegionId = id;
@@ -17,11 +23,9 @@ namespace Ensembl.Dto
 
         public static Dna Get(int id, IDbConnection conn)
         {
-            var sql = @"select sequence from dna where seq_region_id=@Id";
+            var sql = @"select * from dna where seq_region_id=@Id";
 
-            return conn.Query<dynamic>(sql, new { Id = id })
-                .Select(r => new Dna(id, r.sequence))
-                .FirstOrDefault();
+            return conn.Query<Dna>(sql, new { Id = id }).FirstOrDefault();
         }
     }
 }
