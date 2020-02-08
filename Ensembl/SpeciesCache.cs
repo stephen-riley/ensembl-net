@@ -62,6 +62,22 @@ namespace Ensembl
             return chromosomes[name];
         }
 
+        internal IEnumerable<string> GetChromosomeList()
+        {
+            var sql = @"
+                select name 
+                from seq_region 
+                where coord_system_id=@ChrCsId
+                and length(name) <= 3
+                order by name";
+
+            var chrCsId = SpeciesCache.ByName(SpeciesDbName).CoordSystems.Values.Where(cs => cs.Name == "chromosome" && cs.Attributes.Contains("default_version")).First().Id;
+
+            using var conn = new MySqlConnection(ConnectionString);
+            var list = conn.Query<string>(sql, new { ChrCsId = chrCsId });
+            return list;
+        }
+
         public ReadOnlyMemory<char> GetDnaSequence(int id, int start = 1, int end = Int32.MaxValue)
         {
             if (!sequences.ContainsKey(id))

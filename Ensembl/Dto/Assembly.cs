@@ -62,7 +62,7 @@ namespace Ensembl.Dto
         {
             if (pos < AssemblyStart || pos > AssemblyEnd)
             {
-                throw new ArgumentException($"{nameof(pos)} must be within AssemblyStart and AssemblyEnd", nameof(pos));
+                throw new ArgumentException($"{nameof(pos)}({pos}) must be within AssemblyStart({AssemblyStart}) and AssemblyEnd({AssemblyEnd})", nameof(pos));
             }
 
             var ds = pos - AssemblyStart;

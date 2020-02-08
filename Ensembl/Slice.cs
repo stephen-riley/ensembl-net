@@ -29,6 +29,8 @@ namespace Ensembl
             }
         }
 
+        public int Length => SpeciesCache.ByName(SpeciesDbName).GetChromosome(ChromosomeName).Length;
+
         public Slice(string species, string chromosomeName)
         {
             var speciesDbName = SpeciesCache.GetDbNameForCommonName(species);
@@ -87,7 +89,7 @@ namespace Ensembl
                     }
                 }
 
-                if (asm.AssemblyEnd > end)
+                if (asm.AssemblyEnd >= end)
                 {
                     break;
                 }
@@ -99,6 +101,17 @@ namespace Ensembl
         public static IEnumerable<string> GetSpeciesDbNames()
         {
             return SpeciesCache.GetInstalledEnsemblDatabases();
+        }
+
+        public static IEnumerable<string> GetSpeciesChromosomeList(string species)
+        {
+            var speciesDbName = SpeciesCache.GetDbNameForCommonName(species);
+            if (speciesDbName == null)
+            {
+                throw new EnsemblException($"species name '{species}' not found");
+            }
+
+            return SpeciesCache.ByName(speciesDbName).GetChromosomeList();
         }
     }
 }

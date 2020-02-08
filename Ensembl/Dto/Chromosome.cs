@@ -11,6 +11,8 @@ namespace Ensembl.Dto
 
         public string Id { get; private set; }
 
+        public int Length => Assemblies.Last().AssemblyEnd;
+
         private string SpeciesDbName;
 
         public Chromosome(string speciesDbName, string id, IEnumerable<Assembly> assemblies)

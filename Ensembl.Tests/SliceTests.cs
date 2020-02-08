@@ -58,5 +58,16 @@ namespace Ensembl.Tests
 
             Assert.AreEqual(expected, seq);
         }
+
+        [TestMethod]
+        public void CorrectChromosome1Length()
+        {
+            const int expectedLength = 248_946_422;
+
+            var slice = new Slice(species: "Human", chromosomeName: "1");
+            var length = slice.Length;
+
+            Assert.AreEqual(expectedLength, length);
+        }
     }
 }
