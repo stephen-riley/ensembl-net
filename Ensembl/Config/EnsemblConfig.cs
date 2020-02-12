@@ -23,6 +23,8 @@ namespace Ensembl.Config
 
         public static string ShortConnectionString { get; internal set; }
 
+        public static DbConfig DatabaseConfig { get; internal set; }
+
         static EnsemblConfig()
         {
             var etcData = ReadConfigFile("/etc/ensembl.conf");
@@ -51,6 +53,7 @@ namespace Ensembl.Config
             var dbConfig = new DbConfig(config);
             ShortConnectionString = string.Format("Server={0};User ID={1}", dbConfig.Host, dbConfig.User);
             ConnectionString = $"{ShortConnectionString};Database={{0}}";
+            DatabaseConfig = dbConfig;
 
             EnsemblInitializer.Init();
         }
